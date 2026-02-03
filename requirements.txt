@@ -1,0 +1,6 @@
+# Core logic dependencies (Mocked in this prototype)
+pydantic
+chromadb
+grpcio
+numpy
+pandas
