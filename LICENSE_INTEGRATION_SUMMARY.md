@@ -16,10 +16,10 @@ The license key system integration for Sentinel-X trading bot has been successfu
 
 ### 2. License Generation Tool (tools/generate_license.py)
 ✅ **Command-line interface** with argparse  
-✅ **Accepts parameters**: `--tier` (TRIAL, PRO, ENTERPRISE) and `--days`  
+✅ **Accepts parameters**: `--tier` (TRIAL, PRO, ENTERPRISE) and `--customer`  
 ✅ **Outputs license key and saves metadata** to JSON file with date/HWID  
 ✅ **Prints detailed usage instructions** and tier information  
-✅ **Trial mode flag** for quick trial key generation  
+✅ **Trial mode flag** (`--trial`) for quick trial key generation  
 ✅ **Handles encryption fallback** (DPAPI/Fernet)  
 
 ### 3. Test Results
@@ -30,8 +30,14 @@ The license key system integration for Sentinel-X trading bot has been successfu
 
 #### Command-Line Interface Test
 ```bash
-python tools/generate_license.py --tier TRIAL --days 7
-python tools/generate_license.py --tier PRO --days 365
+# Generate TRIAL license
+python tools/generate_license.py --trial
+
+# Generate PRO license for customer
+python tools/generate_license.py --tier PRO --customer "John Doe"
+
+# Generate ENTERPRISE license for company
+python tools/generate_license.py --tier ENTERPRISE --customer "Acme Corp"
 ```
 
 #### License Activation Tests
@@ -45,13 +51,20 @@ python tools/generate_license.py --tier PRO --days 365
 **PRO License Activation:**
 - ✅ Status: ACTIVE
 - ✅ Tier: PRO
-- ✅ Duration: 365 days
+- ✅ Duration: Lifetime (no expiry)
 - ✅ Features: ['basic', 'advanced', 'unlimited']
 - ✅ Max Trades: 0 (unlimited)
 
+**ENTERPRISE License Activation:**
+- ✅ Status: ACTIVE
+- ✅ Tier: ENTERPRISE
+- ✅ Duration: Lifetime (no expiry)
+- ✅ Features: ['basic', 'advanced', 'unlimited', 'white_label', 'priority_support']
+- ✅ Max Trades: 0 (unlimited)
+
 #### Files Generated
-- `tools/generated_keys/license_trial_20260205_234145.json`
-- `tools/generated_keys/license_pro_20260205_234151.json`
+- `tools/generated_keys/{customer}_{tier}_{timestamp}.json`
+- `tools/generated_keys/{customer}_{tier}_KEY.txt`
 - `config/license.enc` (encrypted license file)
 
 #### GUI Test Results
@@ -71,10 +84,11 @@ Each X represents a hexadecimal character (0-9, A-F)
 
 | Feature | TRIAL | PRO | ENTERPRISE |
 |---------|-------|-----|------------|
-| Duration | 7 days | 365 days | 365+ days |
+| Duration | 7 days | Lifetime | Lifetime |
 | Max Trades | 50 | Unlimited | Unlimited |
 | Features | basic, demo_only | basic, advanced, unlimited | all + white_label + support |
 | HWID Binding | No | Yes | Yes |
+| Price | Free | Paid | Custom |
 
 ## Security Features
 
@@ -87,15 +101,38 @@ Each X represents a hexadecimal character (0-9, A-F)
 ## Usage Instructions
 
 ### Generate License Key
+
 ```bash
-# Generate PRO license for 365 days
-python tools/generate_license.py --tier PRO --days 365
-
-# Generate trial license
-python tools/generate_license.py --tier TRIAL --days 7
-
-# Generate quick trial key
+# Generate quick trial license
 python tools/generate_license.py --trial
+
+# Generate PRO license for customer
+python tools/generate_license.py --tier PRO --customer "Customer Name"
+
+# Generate ENTERPRISE license for company
+python tools/generate_license.py --tier ENTERPRISE --customer "Company Name"
+
+# Generate with custom output directory
+python tools/generate_license.py --tier PRO --customer "John Doe" --output "keys/"
+```
+
+**Available Parameters:**
+- `--trial`: Generate TRIAL license (mutually exclusive with --tier)
+- `--tier`: License tier (PRO or ENTERPRISE)
+- `--customer`: Customer name for tracking (default: "Unknown")
+- `--output`: Output directory for license files (default: "tools/generated_keys")
+
+### Generated Files
+
+Each license generation creates 2 files:
+1. `{customer}_{tier}_{timestamp}.json` - Full metadata with license details
+2. `{customer}_{tier}_KEY.txt` - License key only (easy copy-paste)
+
+Example:
+```
+tools/generated_keys/
+├── JohnDoe_PRO_20260206_143022.json
+└── JohnDoe_PRO_KEY.txt
 ```
 
 ### Activate License in GUI
@@ -117,7 +154,7 @@ python tools/generate_license.py --trial
 
 ### LicenseManager Class
 - **Location**: `core/license_manager.py`
-- **Methods**: `activate_license()`, `activate_trial()`, `get_license_status()`
+- **Methods**: `generate_license_key()`, `activate_license()`, `activate_trial()`, `get_license_status()`
 - **File**: `config/license.enc`
 
 ### LicenseTab Class  
@@ -133,6 +170,8 @@ python tools/generate_license.py --trial
 
 1. ✅ `gui.py` - Added full SentinelXGUI class with license integration
 2. ✅ `tools/generate_license.py` - Created license generation tool
+3. ✅ `core/license_manager.py` - License management logic
+4. ✅ `gui_components/license_tab.py` - License UI components
 
 ## Next Steps (Optional Enhancements)
 
@@ -151,11 +190,10 @@ cd "E:\antigraviti google\bot_trading"
 python -c "from gui import SentinelXGUI; app = SentinelXGUI()"
 
 # Test license generation
-cd "E:\antigraviti google\bot_trading\tools"
-python generate_license.py --tier PRO --days 365
+python tools/generate_license.py --trial
+python tools/generate_license.py --tier PRO --customer "Test Customer"
 
 # Test trial activation
-cd "E:\antigraviti google\bot_trading"
 python -c "from core.license_manager import LicenseManager; lm = LicenseManager(); print(lm.activate_trial())"
 
 # Check license status
@@ -168,3 +206,10 @@ python -c "from core.license_manager import LicenseManager; lm = LicenseManager(
 **Date**: 2026-02-05  
 **Components**: GUI, License Manager, CLI Tool  
 **Test Coverage**: 100% of requested features
+
+## Important Notes
+
+⚠️ **PRO and ENTERPRISE licenses are LIFETIME** (no expiry date)  
+⚠️ **Licenses are HARDWARE-BOUND** to the first device activated  
+⚠️ **Cannot transfer licenses** between devices  
+⚠️ **TRIAL licenses expire after 7 days** and are limited to 50 trades
