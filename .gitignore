@@ -1,0 +1,51 @@
+# Build artifacts
+build/
+dist/
+*.exe
+*.pkg
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Configuration dengan sensitive data
+config/*.enc
+config/*.key
+.encryption_salt
+
+# Database files
+*.db
+*.sqlite3
+db_chroma/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+.temp_*.py
+nul
+access_test.txt
+
+# Generated keys
+tools/generated_keys/*.json
+tools/generated_keys/*.txt
+
+# Dependencies
+node_modules/
+
+# Backup files
+*_backup.py
+*_fixed.py

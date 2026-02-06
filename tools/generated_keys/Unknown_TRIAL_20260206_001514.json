@@ -1,0 +1,13 @@
+{
+  "license_key": "SNTL-X-3259-7AC9-A9AB-2136",
+  "tier": "TRIAL",
+  "customer": "Unknown",
+  "generated_at": "2026-02-06T00:15:14.555526",
+  "hardware_id": "78a4424657e53faedd7ab8d931798e7fced2a3c173812012338607ffa27cd71b",
+  "expires_at": "7 days from activation",
+  "max_trades": 50,
+  "features": [
+    "basic",
+    "demo_only"
+  ]
+}

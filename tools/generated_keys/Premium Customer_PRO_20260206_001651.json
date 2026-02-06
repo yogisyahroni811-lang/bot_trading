@@ -1,0 +1,14 @@
+{
+  "license_key": "SNTL-X-7808-55AA-1CBF-D0FE",
+  "tier": "PRO",
+  "customer": "Premium Customer",
+  "generated_at": "2026-02-06T00:16:51.349962",
+  "hardware_id": "78a4424657e53faedd7ab8d931798e7fced2a3c173812012338607ffa27cd71b",
+  "expires_at": "Lifetime",
+  "max_trades": 0,
+  "features": [
+    "basic",
+    "advanced",
+    "unlimited"
+  ]
+}
