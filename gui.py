@@ -12,8 +12,17 @@ import os
 import shutil
 import subprocess
 import threading
+import re
 
 logger = get_logger(__name__)
+
+def clean_html(text):
+    """Remove HTML tags dari text untuk ditampilkan di GUI."""
+    if not text:
+        return text
+    # Remove HTML tags
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', text)
 
 class SentinelXGUI(ctk.CTk):
     def __init__(self):
@@ -1521,10 +1530,10 @@ Hardware-locked: License binds to first device activated"""
         )
         
         reason = f"Tier 1 (Math): {strength*0.3:.1%} | Tier 3 (Debate): {max(pro_conf, con_conf)*0.7:.1%}"
-        self.final_reasoning_text.configure(state='normal')
-        self.final_reasoning_text.delete('1.0', 'end')
-        self.final_reasoning_text.insert('1.0', reason)
-        self.final_reasoning_text.configure(state='disabled')
+                self.final_reasoning_text.configure(state='normal')
+                self.final_reasoning_text.delete('1.0', 'end')
+                self.final_reasoning_text.insert('1.0', clean_html(reason))
+                self.final_reasoning_text.configure(state='disabled')
         
         # Save to history
         try:
@@ -1602,7 +1611,7 @@ Hardware-locked: License binds to first device activated"""
                 
                 self.final_reasoning_text.configure(state='normal')
                 self.final_reasoning_text.delete('1.0', 'end')
-                self.final_reasoning_text.insert('1.0', full_reason)
+                self.final_reasoning_text.insert('1.0', clean_html(full_reason))
                 self.final_reasoning_text.configure(state='disabled')
                 
                 # Refresh history occasionally
