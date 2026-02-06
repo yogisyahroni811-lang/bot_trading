@@ -16,11 +16,13 @@ The license key system integration for Sentinel-X trading bot has been successfu
 
 ### 2. License Generation Tool (tools/generate_license.py)
 ✅ **Command-line interface** with argparse  
-✅ **Accepts parameters**: `--tier` (TRIAL, PRO, ENTERPRISE) and `--customer`  
-✅ **Outputs license key and saves metadata** to JSON file with date/HWID  
-✅ **Prints detailed usage instructions** and tier information  
+✅ **Single license generation** - Generate one license at a time  
+✅ **Batch license generation** - Generate 1000+ licenses sekaligus  
+✅ **No customer name required** - Anonymous license generation  
+✅ **Outputs license key and saves metadata** to JSON file  
+✅ **Batch summary file** - Contains all generated keys in one file  
+✅ **Keys-only file** - Easy copy-paste untuk distribution  
 ✅ **Trial mode flag** (`--trial`) for quick trial key generation  
-✅ **Handles encryption fallback** (DPAPI/Fernet)  
 
 ### 3. Test Results
 
@@ -28,16 +30,28 @@ The license key system integration for Sentinel-X trading bot has been successfu
 - **TRIAL License**: `SNTL-X-2237-4F1E-D842-7A54`
 - **PRO License**: `SNTL-X-5B88-DAB4-70A9-8D01`
 
-#### Command-Line Interface Test
+#### Single License Generation
 ```bash
-# Generate TRIAL license
+# Generate single TRIAL license
 python tools/generate_license.py --trial
 
-# Generate PRO license for customer
-python tools/generate_license.py --tier PRO --customer "John Doe"
+# Generate single PRO license
+python tools/generate_license.py --tier PRO
 
-# Generate ENTERPRISE license for company
-python tools/generate_license.py --tier ENTERPRISE --customer "Acme Corp"
+# Generate single ENTERPRISE license
+python tools/generate_license.py --tier ENTERPRISE
+```
+
+#### Batch License Generation (1000+ licenses)
+```bash
+# Generate 1000 PRO licenses
+python tools/generate_license.py --tier PRO --batch 1000
+
+# Generate 1000 TRIAL licenses
+python tools/generate_license.py --tier TRIAL --batch 1000
+
+# Generate 500 ENTERPRISE licenses
+python tools/generate_license.py --tier ENTERPRISE --batch 500
 ```
 
 #### License Activation Tests
@@ -63,9 +77,16 @@ python tools/generate_license.py --tier ENTERPRISE --customer "Acme Corp"
 - ✅ Max Trades: 0 (unlimited)
 
 #### Files Generated
-- `tools/generated_keys/{customer}_{tier}_{timestamp}.json`
-- `tools/generated_keys/{customer}_{tier}_KEY.txt`
-- `config/license.enc` (encrypted license file)
+
+**Single License:**
+- `tools/generated_keys/{TIER}_{timestamp}.json`
+
+**Batch Generation (e.g., 1000 PRO licenses):**
+- `tools/generated_keys/PRO_0001_{timestamp}.json` - Individual license files
+- `tools/generated_keys/PRO_0002_{timestamp}.json`
+- ... (1000 files)
+- `tools/generated_keys/BATCH_PRO_1000_SUMMARY.json` - Complete batch metadata
+- `tools/generated_keys/BATCH_PRO_1000_KEYS.txt` - All keys in one file (easy distribution)
 
 #### GUI Test Results
 - ✅ GUI starts successfully
@@ -100,39 +121,57 @@ Each X represents a hexadecimal character (0-9, A-F)
 
 ## Usage Instructions
 
-### Generate License Key
+### Generate Single License
 
 ```bash
-# Generate quick trial license
+# Generate TRIAL license
 python tools/generate_license.py --trial
 
-# Generate PRO license for customer
-python tools/generate_license.py --tier PRO --customer "Customer Name"
+# Generate PRO license
+python tools/generate_license.py --tier PRO
 
-# Generate ENTERPRISE license for company
-python tools/generate_license.py --tier ENTERPRISE --customer "Company Name"
+# Generate ENTERPRISE license
+python tools/generate_license.py --tier ENTERPRISE
 
 # Generate with custom output directory
-python tools/generate_license.py --tier PRO --customer "John Doe" --output "keys/"
+python tools/generate_license.py --tier PRO --output "keys/"
 ```
 
-**Available Parameters:**
-- `--trial`: Generate TRIAL license (mutually exclusive with --tier)
-- `--tier`: License tier (PRO or ENTERPRISE)
-- `--customer`: Customer name for tracking (default: "Unknown")
-- `--output`: Output directory for license files (default: "tools/generated_keys")
+### Generate Batch Licenses (1000+)
 
-### Generated Files
+```bash
+# Generate 1000 PRO licenses untuk customers
+python tools/generate_license.py --tier PRO --batch 1000
 
-Each license generation creates 2 files:
-1. `{customer}_{tier}_{timestamp}.json` - Full metadata with license details
-2. `{customer}_{tier}_KEY.txt` - License key only (easy copy-paste)
+# Generate 1000 TRIAL licenses untuk promotion
+python tools/generate_license.py --tier TRIAL --batch 1000
 
-Example:
+# Generate 500 ENTERPRISE licenses
+python tools/generate_license.py --tier ENTERPRISE --batch 500
+
+# Custom output directory
+python tools/generate_license.py --tier PRO --batch 1000 --output "licenses/pro/"
 ```
-tools/generated_keys/
-├── JohnDoe_PRO_20260206_143022.json
-└── JohnDoe_PRO_KEY.txt
+
+**Output Files untuk Batch:**
+- `BATCH_PRO_1000_SUMMARY.json` - Complete metadata dengan semua keys
+- `BATCH_PRO_1000_KEYS.txt` - Semua license keys dalam format text (easy distribution)
+- `PRO_0001_{timestamp}.json` hingga `PRO_1000_{timestamp}.json` - Individual files
+
+### Batch Output Example
+
+**BATCH_PRO_1000_KEYS.txt:**
+```
+Sentinel-X PRO License Keys - 1000 total
+============================================================
+Generated: 2026-02-06 15:30:45
+============================================================
+
+0001. SNTL-X-1234-5678-9ABC-DEF0
+0002. SNTL-X-ABCD-EF01-2345-6789
+0003. SNTL-X-9876-5432-10FE-DCBA
+...
+1000. SNTL-X-FEDC-BA09-8765-4321
 ```
 
 ### Activate License in GUI
@@ -169,7 +208,7 @@ tools/generated_keys/
 ## Files Modified
 
 1. ✅ `gui.py` - Added full SentinelXGUI class with license integration
-2. ✅ `tools/generate_license.py` - Created license generation tool
+2. ✅ `tools/generate_license.py` - Created license generation tool dengan batch support
 3. ✅ `core/license_manager.py` - License management logic
 4. ✅ `gui_components/license_tab.py` - License UI components
 
@@ -179,8 +218,8 @@ tools/generated_keys/
 - [ ] Implement floating/movable licenses for ENTERPRISE
 - [ ] Add license deactivation/revocation system
 - [ ] Create license management dashboard for administrators
-- [ ] Implement license server with online activation
-- [ ] Add license usage analytics and reporting
+- [ ] Implement license server dengan online activation
+- [ ] Add license usage analytics dan reporting
 
 ## Verification Commands
 
@@ -189,9 +228,12 @@ tools/generated_keys/
 cd "E:\antigraviti google\bot_trading"
 python -c "from gui import SentinelXGUI; app = SentinelXGUI()"
 
-# Test license generation
+# Test single license generation
 python tools/generate_license.py --trial
-python tools/generate_license.py --tier PRO --customer "Test Customer"
+python tools/generate_license.py --tier PRO
+
+# Test batch generation (10 licenses untuk test)
+python tools/generate_license.py --tier PRO --batch 10
 
 # Test trial activation
 python -c "from core.license_manager import LicenseManager; lm = LicenseManager(); print(lm.activate_trial())"
@@ -203,13 +245,15 @@ python -c "from core.license_manager import LicenseManager; lm = LicenseManager(
 ---
 
 **Status**: ✅ COMPLETED  
-**Date**: 2026-02-05  
-**Components**: GUI, License Manager, CLI Tool  
+**Date**: 2026-02-06  
+**Components**: GUI, License Manager, CLI Tool dengan Batch Generation  
 **Test Coverage**: 100% of requested features
 
 ## Important Notes
 
-⚠️ **PRO and ENTERPRISE licenses are LIFETIME** (no expiry date)  
-⚠️ **Licenses are HARDWARE-BOUND** to the first device activated  
-⚠️ **Cannot transfer licenses** between devices  
-⚠️ **TRIAL licenses expire after 7 days** and are limited to 50 trades
+⚠️ **PRO dan ENTERPRISE licenses adalah LIFETIME** (tidak ada expiry)  
+⚠️ **Licenses adalah HARDWARE-BOUND** ke device pertama yang activate  
+⚠️ **Tidak bisa transfer licenses** antar device  
+⚠️ **TRIAL licenses expired setelah 7 hari** dan limited to 50 trades  
+⚠️ **Batch generation** ideal untuk mass distribution setelah checkout  
+⚠️ **No customer name required** - licenses are anonymous and reusable
