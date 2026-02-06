@@ -1,6 +1,33 @@
-# Core logic dependencies (Mocked in this prototype)
-pydantic
-chromadb
-grpcio
-numpy
-pandas
+fastapi>=0.109.2
+uvicorn>=0.27.1
+pydantic>=2.6.1
+slowapi>=0.1.9
+cryptography>=42.0.2
+pywin32>=306
+
+python-dotenv>=1.0.1
+
+# AI/ML Dependencies
+chromadb>=0.4.22
+langchain>=0.1.9
+langchain-openai>=0.0.8
+openai>=1.12.0
+httpx>=0.26.0
+tiktoken>=0.6.0
+langchain-google-genai
+
+# GUI Dependencies
+matplotlib
+customtkinter>=5.2.2
+pillow>=10.2.0
+
+# File Processing
+pypdf>=3.17.4
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.23.4
+
+# Packaging
+pyinstaller>=6.3.0
+pystray>=0.19.5
